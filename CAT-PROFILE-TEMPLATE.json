@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "status": "design-template-not-consumed-by-current-app",
+  "description": "可复用角色参数设计模板；需要将当前硬编码改为参数驱动后使用。null 表示待测量，不表示零。",
+  "assetAdapter": {
+    "source": "public/models/companion-cat.glb",
+    "attribution": "ATTRIBUTION.md",
+    "bodyMesh": "Object_8",
+    "eyeMesh": "Object_7",
+    "whiskerMesh": "Object_32",
+    "forwardAxis": "+Z",
+    "runtimeScale": 5.4,
+    "boneMap": {},
+    "regionMasks": {},
+    "eyeUvRegions": [],
+    "note": "骨骼映射、区域遮罩与眼部 UV 必须由基础模型标定；换模型不能照搬。"
+  },
+  "character": {
+    "id": "new-cat",
+    "name": "新猫咪",
+    "referencePhotos": [],
+    "anatomy": {
+      "cheekWidthMultiplier": null,
+      "torsoWidthMultiplier": null,
+      "muzzleOffset": null,
+      "tailWidthMultiplier": null
+    },
+    "coat": {
+      "baseColor": null,
+      "patches": [],
+      "patternCoordinateSpace": "rest-pose",
+      "leftRightConvention": "animal-local",
+      "noseColor": null
+    },
+    "groom": {
+      "seed": 1,
+      "candidateRootCount": null,
+      "baseLengthInSourceUnits": null,
+      "regions": [],
+      "excludedRegions": ["eyes", "nose", "paw-pads"]
+    },
+    "eyes": {"irisColor": null, "pupilShape": "ellipse"},
+    "motion": {
+      "walkSpeedInWorldUnits": 1.45,
+      "runSpeedInWorldUnits": 4.6,
+      "walkStrideInWorldUnits": null,
+      "runStrideInWorldUnits": null,
+      "jointLimits": {}
+    }
+  },
+  "qualityRecord": {
+    "assetHash": null,
+    "referenceViews": ["front", "left", "right", "back", "top"],
+    "lightingPreset": null,
+    "targetDevice": null,
+    "acceptanceStatus": "not-reviewed"
+  }
+}

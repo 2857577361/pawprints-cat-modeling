@@ -1,0 +1,2 @@
+const {contextBridge,ipcRenderer}=require('electron');
+contextBridge.exposeInMainWorld('petAPI',Object.freeze({load:()=>ipcRenderer.invoke('library:load'),save:state=>ipcRenderer.invoke('library:save',state),pickMedia:()=>ipcRenderer.invoke('library:import'),mediaURL:id=>`paw-media://file/${encodeURIComponent(id)}`,exportBackup:()=>ipcRenderer.invoke('library:backup'),restoreBackup:()=>ipcRenderer.invoke('library:restore'),openOriginal:id=>ipcRenderer.invoke('library:open',id)}));

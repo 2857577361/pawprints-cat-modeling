@@ -1,0 +1,1 @@
+import {chromium} from 'playwright';const b=await chromium.launch({channel:'chrome',headless:true});const p=await b.newPage({viewport:{width:512,height:512},deviceScaleFactor:2});await p.goto('http://127.0.0.1:5188/icon.svg');await p.screenshot({path:'assets/icon-1024.png',omitBackground:true});await b.close();

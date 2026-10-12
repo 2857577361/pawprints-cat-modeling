@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Agent 建模任务记录模板；不是 App 配置，不会自动生成模型",
+  "identity": {"name": "", "birthday": null},
+  "references": [],
+  "coordinateConvention": {"leftRight": "animal-local", "imageMirroringChecked": false},
+  "anatomy": {
+    "faceDescription": "", "ears": "", "muzzle": "", "bodyDescription": "",
+    "measurements": {"unit": "meter", "bodyLength": null, "shoulderHeight": null, "tailLength": null},
+    "inferredRegions": []
+  },
+  "coat": {
+    "baseColor": null,
+    "regions": [],
+    "whiteAreas": [],
+    "noseColor": null,
+    "pawPadColor": null,
+    "eyeDescription": "",
+    "lightingCaveat": "从照片取色时需要区分光照与固有毛色"
+  },
+  "groom": {"lengthDescription": "", "regionGuides": [], "randomSeed": 1701},
+  "motion": {"required": ["idle", "walk", "run", "jump"], "referenceVideos": []},
+  "delivery": {"target": "desktop-realtime", "editableSource": true, "independentViewer": true},
+  "evidence": [],
+  "acceptance": {"status": "not-started", "knownLimitations": []}
+}

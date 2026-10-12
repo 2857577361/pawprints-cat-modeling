@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "purpose": "由 Agent 针对选定基础资产填写；不是现成运行适配器",
+  "asset": {"path": "", "sourceUrl": "", "authors": [], "license": "", "sha256": ""},
+  "coordinates": {"unit": null, "upAxis": null, "forwardAxis": null, "restPose": null},
+  "meshes": {"body": [], "eyes": [], "eyelids": [], "whiskers": []},
+  "boneMap": {"root": null, "spine": [], "neck": [], "tail": [], "leftFront": [], "rightFront": [], "leftHind": [], "rightHind": []},
+  "materialInputs": {"uvChannels": [], "eyeUvRegions": [], "colorSpace": null},
+  "skinChecks": {"inverseBindMatricesChecked": false, "weightNormalizationChecked": false, "crossLimbLeakageChecked": false, "tailTipChecked": false},
+  "animationSources": [],
+  "export": {"format": "glb", "requiresRuntimeShader": null, "requiresRuntimeMotion": null, "verifiedInSecondViewer": false}
+}

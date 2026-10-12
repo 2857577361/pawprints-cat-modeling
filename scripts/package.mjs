@@ -1,0 +1,4 @@
+import packager from '@electron/packager';import fs from 'node:fs/promises';import os from 'node:os';import path from 'node:path';
+const version=JSON.parse(await fs.readFile('node_modules/electron/package.json')).version;
+let electronZipDir;const cache=path.join(os.homedir(),'Library/Caches/electron');try{for(const folder of await fs.readdir(cache)){try{await fs.access(path.join(cache,folder,`electron-v${version}-darwin-arm64.zip`));electronZipDir=path.join(cache,folder);break;}catch{}}}catch{}
+console.log(await packager({dir:'.',name:'Pawprints',appBundleId:'studio.pawprints.memorygarden',platform:'darwin',arch:'arm64',electronVersion:version,electronZipDir,out:'desktop/build',overwrite:true,icon:'assets/icon.icns',prune:false,ignore:[/^\/desktop/,/^\/.git/,/^\/node_modules/,/^\/tests/,/^\/public/,/^\/assets/,/^\/scripts/,/^\/package-lock.json/]}));

@@ -1,0 +1,1 @@
+e80f22461e5a461d42f0facfbfd51f2cfd680e1442228b62971bbdcd8064ed9a  Pawprints-0.2.1-macOS-arm64.zip
