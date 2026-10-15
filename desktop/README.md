@@ -12,7 +12,9 @@
 shasum -a 256 Pawprints-0.3.2-macOS-arm64.zip
 ```
 
-与 [SHA256SUMS.txt](SHA256SUMS.txt) 中对应版本一行比对；Release 同时提供该校验文件。
+与仓库中的 [SHA256SUMS.txt](SHA256SUMS.txt) 对应版本一行比对；Release 附件列表也会显示安装包的 SHA-256。
+
+0.3.2 安装包校验值：`92aa382ef58564e0aec4fb447e49525c007493e28078a8898e117485f637430f`。
 
 从源码构建：
 
@@ -22,3 +24,4 @@ npm run package
 ```
 
 输出为 `desktop/build/Pawprints-darwin-arm64/Pawprints.app`。首次安装依赖与 Electron 运行时需要联网。Python 只用于可选贴图制作，不是运行桌面版的依赖。
+
