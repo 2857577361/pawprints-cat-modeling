@@ -159,7 +159,7 @@ export function createFelineMotion(model) {
     for(const pose of tailPose){pose.yaw=0;pose.pitch=0;}
     previousWorld=model.getWorldPosition(V());previousForward.copy(model.getWorldDirection(V()));for(const leg of legs){leg.initialized=false;leg.recovery=-1;leg.lastPawWorld.copy(leg.ball.getWorldPosition(V()));}
   }
-  function update(dt,time,speed=0,jumpPhase=-1){
+  function update(dt,time,speed=0,jumpPhase=-1,activity=null){
     dt=clamp(dt,0,.05);if(!Number.isFinite(time))time=0;
     speed=Math.max(0,Number.isFinite(speed)?speed:0);
     model.updateWorldMatrix(true,true);
@@ -186,9 +186,13 @@ export function createFelineMotion(model) {
     restore();
     const turn=cycle*Math.PI*2;
     const flightBob=Math.pow(Math.max(0,Math.sin(turn*2-.45)),2)*.010*runBlend*blend;
+    const activityWeight=clamp(activity?.weight||0,0,1)*(1-blend);
+    const resting=activity?.kind==='rest'?activityWeight:0;
+    const eating=activity?.kind==='eat'?activityWeight:0;
+    const pawing=['paw','dig'].includes(activity?.kind)?activityWeight:0;
     const bodyDown=(-.018-.027*runBlend)*Math.min(1,blend*1.8) + flightBob;
     const jumpCrouch=jumping?(-.017*Math.exp(-Math.pow((jumpPhase-.02)/.10,2))-.022*Math.exp(-Math.pow((jumpPhase-.94)/.08,2))):0;
-    translate(rigRoot,V(0,bodyDown+jumpCrouch,0));
+    translate(rigRoot,V(0,bodyDown+jumpCrouch-resting*.155-eating*.016,0));
     rotate(root,X,(Math.sin(turn)*.035*runBlend)*blend);
     for(let i=0;i<spine.length;i++){
       rotate(spine[i],X,Math.sin(turn-.45)*.033*runBlend*blend+(i===0?-.012*Math.sin(time*1.6)*(1-blend):0));
@@ -199,6 +203,8 @@ export function createFelineMotion(model) {
     rotate(neck[1],X,Math.sin(time*.71)*.018*(1-blend)-Math.sin(turn)*.016*blend);
     rotate(neck[2],Y,Math.sin(time*.43)*.09*(1-blend)+Math.sin(time*.8)*.012*blend);
     rotate(neck[2],Z,Math.sin(time*.31+1.1)*.02*(1-blend));
+    rotate(neck[0],X,eating*(.32+Math.sin(time*5)*.055)+resting*.14);
+    rotate(neck[1],X,eating*.20+resting*.10);
     // Small overlapping motion: a stable base, softer tip and delayed response
     // to turns. Local segment rotations accumulate, so keep each angle modest.
     for(let i=0;i<tail.length;i++){
@@ -217,6 +223,14 @@ export function createFelineMotion(model) {
     model.updateWorldMatrix(true,true);
     const inverse=new T.Matrix4().copy(model.matrixWorld).invert();
     for(const leg of legs){
+      if(resting>.01||eating>.01||pawing>.01){
+        const target=leg.paw.clone();
+        target.z+=resting*(leg.front?.080:.035);
+        target.x+=(leg.side==='l'?1:-1)*resting*.006;
+        if(leg.front){const wave=Math.max(0,Math.sin(time*(activity?.kind==='dig'?7:3)+(leg.side==='l'?0:Math.PI)));target.y+=pawing*wave*.032;target.z+=pawing*wave*.036;}
+        solveLeg(leg,target,0);
+        leg.initialized=false;leg.stance=false;leg.recovery=-1;leg.lastPawWorld.copy(leg.ball.getWorldPosition(V()));continue;
+      }
       if(jumping){
         const tuck=Math.sin(Math.PI*clamp((jumpPhase-.08)/.80,0,1));
         const target=leg.paw.clone();

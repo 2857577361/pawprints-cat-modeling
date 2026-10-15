@@ -57,9 +57,9 @@ vec3 coatColor(vec3 original, vec3 p, float gray) {
 }
 `;
 
-export function makeCoatMaterial(source, id, fur=false) {
+export function makeCoatMaterial(source, id, fur=false, albedo=null) {
  const m=new T.MeshPhysicalMaterial({
-  map:source.map, normalMap:fur?null:source.normalMap,
+  map:albedo??source.map, normalMap:null,
   normalScale:new T.Vector2(.65,.65), roughness:fur?.98:.93,
   metalness:0, sheen:fur?.48:.2, sheenColor:new T.Color('#c5c7bf'),
   sheenRoughness:.92, side:T.DoubleSide,
@@ -71,11 +71,11 @@ export function makeCoatMaterial(source, id, fur=false) {
   sh.vertexShader='attribute vec3 coatPoint; varying vec3 vCoatPoint;\n'+sh.vertexShader;
   sh.vertexShader=sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvCoatPoint=coatPoint;');
   sh.fragmentShader='varying vec3 vCoatPoint;uniform float uGray;\n'+coatGLSL+sh.fragmentShader;
-  sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\ndiffuseColor.rgb=coatColor(diffuseColor.rgb,vCoatPoint,uGray);');
+  if(!albedo)sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\ndiffuseColor.rgb=coatColor(diffuseColor.rgb,vCoatPoint,uGray);');
   // Ribbons represent round fibres: both visible sides use the outward follicle normal.
   if(fur)sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_begin>','#include <normal_fragment_begin>\nnormal *= faceDirection;');
  };
- m.customProgramCacheKey=()=>`companion-coat-4-${id}-${fur}`;
+ m.customProgramCacheKey=()=>`companion-coat-5-photo-${id}-${fur}-${Boolean(albedo)}`;
  return m;
 }
 
@@ -112,9 +112,10 @@ export function makeFurGeometry(g,id){
   let length=(id==='shupian'?.0068:.0022)*(.55+rand()*.95);
   const tail=(1-smooth(-.235,-.19,z));
   const ruff=head*(1-smooth(.292,.316,y));
-  if(id==='shupian'){length*=1+tail*2.8+ruff*1.1;}
-  if(head)length*=.3+.7*(1-smooth(.28,.32,y));
-  if(y>.338)length*=.45;
+  if(id==='shupian'){length*=1+tail*2.8+ruff*.8;}
+  if(head)length*=.18+.82*(1-smooth(.278,.310,y));
+  if(y>.338)length*=id==='shupian'?1.5:.45;
+  if(id==='shupian'&&head&&ax>.033&&y>.282&&y<.325)length*=1.35;
   if(y<.095)length*=.48;
   // Face radiates from muzzle; shoulders/chest flow down, spine toward rump.
   tangent.set(0,-.42,-.8);
@@ -125,7 +126,7 @@ export function makeFurGeometry(g,id){
   tangent.addScaledVector(normal,.28+rand()*.2).normalize();
   side.crossVectors(normal,tangent);if(side.lengthSq()<.01)side.crossVectors(normal,new T.Vector3(1,.1,0));side.normalize();
   const ws=[...weights].sort((a,b)=>b[1]-a[1]).slice(0,4);while(ws.length<4)ws.push([0,0]);const sum=ws.reduce((s,x)=>s+x[1],0);ws.forEach(x=>x[1]/=sum);
-  const width=(id==='shupian'?.00009:.00007)*(.6+rand()*.65),shade=.86+rand()*.23;
+  const width=(id==='shupian'?.000065:.000055)*(.6+rand()*.65)*(1+tail*1.3),shade=.86+rand()*.23;
   const base=positions.length/3;
   for(let k=0;k<=3;k++){
    const t=k/3;const spread=width*(1-t*.94);
@@ -152,25 +153,28 @@ function eyeReflection(){
  return eyeEnvironment;
 }
 export function makeEyeMaterial(source,id){
- const material=new T.MeshPhysicalMaterial({map:source.map,side:source.side,roughness:.19,clearcoat:1,clearcoatRoughness:.06,metalness:0,envMap:eyeReflection(),envMapIntensity:.65});
+ const material=new T.MeshPhysicalMaterial({map:source.map,side:source.side,roughness:.08,clearcoat:1,clearcoatRoughness:.06,metalness:0,envMap:eyeReflection(),envMapIntensity:1.1});
  material.onBeforeCompile=shader=>{
+  shader.vertexShader='attribute vec3 coatPoint; varying vec3 vEyePoint;\n'+shader.vertexShader;
+  shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvEyePoint=coatPoint;');
+  shader.fragmentShader='varying vec3 vEyePoint;\n'+shader.fragmentShader;
   shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
-   vec2 irisCenter=vMapUv.y<.25?vec2(.0433,.1345):vec2(.0433,.3898);
-   vec2 irisPoint=(vMapUv-irisCenter)/.0222;
+   float center=vEyePoint.x<0.?-.0188:.0211;
+   vec2 irisPoint=vec2(vEyePoint.x-center,vEyePoint.y-.308)/.0128;
    float irisR=length(irisPoint);
-   if(irisR<1.) {
+   if(vEyePoint.z>.25) {
     float angle=atan(irisPoint.y,irisPoint.x);
-    float fibre=sin(angle*163.+sin(angle*37.)*4.+irisR*13.)*.5+.5;
+    float fibre=sin(angle*143.+sin(angle*31.)*3.+irisR*13.)*.5+.5;
     float smallFibre=sin(angle*317.+irisR*43.)*.5+.5;
-    vec3 eyeBase=mix(vec3(.105,.135,.039),vec3(${id==='shupian'?'.36,.315,.12':'.29,.34,.10'}),.38+fibre*.35+smallFibre*.17);
-    eyeBase*=.79+.21*sin(irisR*24.+angle*3.);
-    eyeBase=mix(eyeBase,vec3(.015,.026,.012),smoothstep(.87,.99,irisR));
-    float pupil=length(irisPoint/vec2(.28,.77));
-    eyeBase=mix(vec3(.002,.005,.003),eyeBase,smoothstep(.96,1.06,pupil));
-    diffuseColor.rgb=mix(diffuseColor.rgb,eyeBase,1.-smoothstep(.975,1.,irisR));
+    vec3 eyeBase=mix(vec3(.12,.16,.046),vec3(${id==='shupian'?'.40,.35,.12':'.32,.38,.115'}),.30+fibre*.38+smallFibre*.16);
+    eyeBase*=.88+.12*sin(irisR*24.+angle*3.);
+    eyeBase=mix(eyeBase,vec3(.024,.032,.016),smoothstep(.83,1.,irisR));
+    float pupil=length(irisPoint/vec2(.16,.64));
+    eyeBase=mix(vec3(.003,.006,.004),eyeBase,smoothstep(.96,1.06,pupil));
+    diffuseColor.rgb=eyeBase;
    }
   `);
  };
- material.customProgramCacheKey=()=>`feline-iris-${id}`;
+ material.customProgramCacheKey=()=>`feline-iris-anatomy-4-${id}`;
  return material;
 }

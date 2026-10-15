@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {route,surfaceHeight,walkable} from '../src/habitat-nav.js';
+test('upstairs route uses continuous stair heights and the only landing connection',()=>{const start={x:0,z:0,level:0},r=route(start,{x:8.5,z:-3.5,level:1});assert.ok(r?.length);let previous=start,changes=0;for(const p of r){assert.ok(walkable(p.x,p.z,p.level));assert.ok(Math.abs(surfaceHeight(p.x,p.z,p.level)-surfaceHeight(previous.x,previous.z,previous.level))<=.32);if(p.level!==previous.level){changes++;assert.equal(p.z,-5.5);assert.ok(p.x>=16&&p.x<=18);}previous=p;}assert.equal(changes,1);});
+test('bed to meadow descends the same stairs; walls and void reject clicks',()=>{const r=route({x:8.5,z:-3.5,level:1},{x:0,z:0,level:0});assert.ok(r?.length);assert.ok(r.some(p=>p.x>=16&&p.z===-5.5));assert.equal(route({x:0,z:0},{x:5,z:0}),null);assert.equal(route({x:0,z:0},{x:17,z:0,level:1}),null);});
+test('every ground-floor interaction can be reached',()=>{for(const [x,z]of[[8,-1.7],[12.5,-4],[7,3.3],[11,8]])assert.ok(route({x:0,z:0},{x,z})?.length);});

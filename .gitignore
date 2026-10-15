@@ -10,3 +10,8 @@ desktop/*.zip
 coverage/
 test-results/
 playwright-report/
+
+.venv/
+__pycache__/
+*.pyc
+work/

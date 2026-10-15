@@ -1,17 +1,24 @@
 # 桌面安装包
 
-[GitHub Releases · v0.2.1](https://github.com/2857577361/pawprints-cat-modeling/releases/tag/v0.2.1)
+[0.3.2 五官修整预览版](https://github.com/2857577361/pawprints-cat-modeling/releases/tag/v0.3.2) · [历史版 0.2.1](https://github.com/2857577361/pawprints-cat-modeling/releases/tag/v0.2.1)
 
-下载 `Pawprints-0.2.1-macOS-arm64.zip`，解压并将 `Pawprints.app` 拖到应用程序目录。仅适用于 Apple Silicon Mac；是未做 Apple 公证的开发构建。
+下载 `Pawprints-0.3.2-macOS-arm64.zip`，解压并将 `Pawprints.app` 拖到应用程序目录。适用于 Apple Silicon Mac，是未做 Apple 公证的开发构建。首次运行保留原有资料目录；更新前可从应用设置导出资料备份，说明见 [APP-README.md](../APP-README.md)。
 
-安装包约 146 MB，超过 GitHub 普通 Git 文件 100 MiB 限制，因此作为本仓库 Release 附件分发，而不直接提交到 Git 历史。参见 [GitHub 大文件说明](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github)。
+0.3.2 包含照片花色烘焙、局部五官修整、两层互动小屋与追球游戏，整体长相仍有共享底模限制，因此以预发布版分发。相似度尚未通过用户验收。
 
-下载后可使用：
+安装包作为 GitHub Release 附件分发，Git 历史保留源码、模型、贴图和方法文档。校验命令：
 
 ```sh
-shasum -a 256 Pawprints-0.2.1-macOS-arm64.zip
+shasum -a 256 Pawprints-0.3.2-macOS-arm64.zip
 ```
 
-与本目录 `SHA256SUMS.txt` 比对。源代码、基础模型和参考照片都已放在仓库中，不需要从桌面程序中提取。
+与 [SHA256SUMS.txt](SHA256SUMS.txt) 中对应版本一行比对；Release 同时提供该校验文件。
 
-从源码构建：在 macOS 上执行 `npm ci`、`npm run package`，输出为 `desktop/build/Pawprints-darwin-arm64/Pawprints.app`。首次安装依赖和 Electron 运行时需要联网。
+从源码构建：
+
+```sh
+npm ci
+npm run package
+```
+
+输出为 `desktop/build/Pawprints-darwin-arm64/Pawprints.app`。首次安装依赖与 Electron 运行时需要联网。Python 只用于可选贴图制作，不是运行桌面版的依赖。

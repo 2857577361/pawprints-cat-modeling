@@ -47,6 +47,14 @@ guillaume bolis 的前序创作署名来自 kenchoo 原作品页的明确说明�
 
 ## 照片、场景与依赖
 
-参考照片由项目所有者提供，并授权随本公开仓库作为角色参考与展示发布。照片没有发送至外部建模服务。照片版权不受本项目 MIT 或模型 CC BY 4.0 许可覆盖；其他用途请联系仓库所有者。
+仓库 public/seed 中的 12 张照片由项目所有者提供，并授权随公开仓库作为角色参考与展示发布。0.3.1–0.3.2 新参考照片用于本地外观调整，本次发布生成贴图及制作脚本，未额外加入这些原片。照片没有发送至外部建模服务。照片版权不受本项目 MIT 或模型 CC BY 4.0 许可覆盖；其他用途请联系仓库所有者。
 
 草地、树木、远山、湖水、花、蝴蝶和界面由本项目代码构建；界面图标使用 Lucide。Three.js、Lucide、Electron 等依赖的版权与许可保留在对应依赖包中。
+
+## 0.3.1 毛色修改
+
+身体毛色贴图由用户照片在本机投射、采样与补绘，替代旧版程序化身体花色。身体与毛发共享新的个体颜色贴图；原始材质只在眼球、局部耳内和脚垫等解剖区域继续使用。仍基于 kenchoo / guillaume bolis 的 CC BY 4.0 猫模型及其 UV、法线、骨骼，保留上述完整署名。照片本身的权利独立于基础模型许可；没有向第三方服务上传本轮参考照片。
+
+## 0.3.2 facial revision
+The original Fripouille-derived body and rig remain under the attribution above.
+New procedural nasal leather, lip/eyelid curves, muzzle cover and geometric iris material are implemented in `src/cat-face.js`, `src/cat.js` and `src/cat-coat.js`. These are a facial revision of the shared base, not a separately sculpted photorealistic reconstruction. See `modeling/FACE-REWORK-0.3.2.md` for limitations.
